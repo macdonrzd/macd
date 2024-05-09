@@ -7,8 +7,8 @@ curriculum_info = {}
 club_info = {}
 subject_evaluation_info = {}
 achievement_ratio_info = {}
-transcript_university_info = []
 admission_results_info = []
+subject_preparation_info = {}
 
 
 # 페이지 1: 학교 정보 입력
@@ -293,82 +293,21 @@ def page_subject_preparation():
             st.write("과목별 준비 사항 및 특징이 삭제되었습니다.")
 
 
-# 페이지 9: 입력된 정보 요약
-def page_summary():
-    st.title("입력된 정보 요약")
+# 페이지 선택
+page_options = {
+    "학교 정보 입력": page_school_info,
+    "학생 수 및 교원 수 입력": page_student_teacher_info,
+    "교육과정 편제표 입력": page_curriculum,
+    "동아리 정보 입력": page_club_info,
+    "과목 평가 방법 입력": page_subject_evaluation,
+    "학업 성취도별 분포 비율 입력": page_achievement_ratio,
+    "대입 입결 정보 입력": page_admission_results_info,
+    "과목별 준비 사항 및 특징 입력": page_subject_preparation
+}
 
-    st.subheader("1. 학교 정보")
-    if school_info:
-        st.write(school_info)
-    else:
-        st.write("학교 정보가 입력되지 않았습니다.")
+selected_page = st.sidebar.selectbox("페이지 선택", list(page_options.keys()))
 
-    st.subheader("2. 학생 수 및 교원 수")
-    if student_teacher_info:
-        st.write(student_teacher_info)
-    else:
-        st.write("학생 수 및 교원 수가 입력되지 않았습니다.")
+# 선택된 페이지 실행
+page_options[selected_page]()
 
-    st.subheader("3. 교육과정 편제표")
-    if curriculum_info:
-        st.write(curriculum_info)
-    else:
-        st.write("교육과정 편제표가 입력되지 않았습니다.")
-
-    st.subheader("4. 동아리 정보")
-    if club_info:
-        st.write(club_info)
-    else:
-        st.write("동아리 정보가 입력되지 않았습니다.")
-
-    st.subheader("5. 과목별 성적평가")
-    if subject_evaluation_info:
-        st.write(subject_evaluation_info)
-    else:
-        st.write("과목별 성적평가가 입력되지 않았습니다.")
-
-    st.subheader("6. 학업 성취도별 분포 비율")
-    if achievement_ratio_info:
-        st.write(achievement_ratio_info)
-    else:
-        st.write("학업 성취도별 분포 비율이 입력되지 않았습니다.")
-
-    st.subheader("7. 대입 입결 정보")
-    if admission_results_info:
-        st.write(admission_results_info)
-    else:
-        st.write("대입 입결 정보가 입력되지 않았습니다.")
-
-    st.subheader("8. 과목별 준비 사항 및 특징")
-    if curriculum_info:
-        for subject, details in curriculum_info.items():
-            for sub_subject, preparation in details.items():
-                st.write(f"{subject} - {sub_subject}: {preparation}")
-    else:
-        st.write("과목별 준비 사항 및 특징이 입력되지 않았습니다.")
-
-   # 나머지 페이지 정보 요약 구현
-
-# Sidebar에 페이지 선택 옵션 표시
-def main():
-    st.sidebar.title("메뉴")
-    pages = {
-        "학교 정보 입력": page_school_info,
-        "학생 수 및 교원 수 입력": page_student_teacher_info,
-        "교육과정 편제표 입력": page_curriculum,
-        "동아리 정보 입력": page_club_info,
-        "과목별 성적평가 입력": page_subject_evaluation,
-        "학업 성취도별 분포 비율 입력": page_achievement_ratio,
-        "대입 입결 정보 입력": page_admission_results_info,
-        "과목별 준비 사항 및 특징 입력": page_subject_preparation,
-        "입력된 정보 요약": page_summary
-    }
-
-    # Sidebar에서 선택한 페이지를 렌더링
-    selection = st.sidebar.radio("이동할 페이지 선택", list(pages.keys()))
-    pages[selection]()
-
-
-if __name__ == "__main__":
-    main()
 
