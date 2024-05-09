@@ -347,6 +347,7 @@ def page_summary():
     else:
         st.write("과목별 준비 사항 및 특징이 입력되지 않았습니다.")
 
+   # 나머지 페이지 정보 요약 구현
 
 # Sidebar에 페이지 선택 옵션 표시
 def main():
