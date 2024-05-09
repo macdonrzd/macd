@@ -7,8 +7,8 @@ curriculum_info = {}
 club_info = {}
 subject_evaluation_info = {}
 achievement_ratio_info = {}
-transcript_university_info = []
 admission_results_info = []
+subject_preparation_info = {}
 
 
 # 페이지 1: 학교 정보 입력
@@ -309,112 +309,5 @@ selected_page = st.sidebar.selectbox("페이지 선택", list(page_options.keys(
 
 # 선택된 페이지 실행
 page_options[selected_page]()
-
-# 페이지 9: 입력된 정보 요약 및 저장 기능
-def page_summary_and_save():
-    st.title("입력된 정보 요약 및 저장")
-
-    st.subheader("1. 학교 정보")
-    if school_info:
-        st.write(school_info)
-    else:
-        st.write("학교 정보가 입력되지 않았습니다.")
-
-    st.subheader("2. 학생 수 및 교원 수")
-    if student_teacher_info:
-        st.write(student_teacher_info)
-    else:
-        st.write("학생 수 및 교원 수가 입력되지 않았습니다.")
-
-    st.subheader("3. 교육과정 편제표")
-    if curriculum_info:
-        st.write(curriculum_info)
-    else:
-        st.write("교육과정 편제표가 입력되지 않았습니다.")
-
-    st.subheader("4. 동아리 정보")
-    if club_info:
-        st.write(club_info)
-    else:
-        st.write("동아리 정보가 입력되지 않았습니다.")
-
-    st.subheader("5. 과목별 성적평가")
-    if subject_evaluation_info:
-        st.write(subject_evaluation_info)
-    else:
-        st.write("과목별 성적평가가 입력되지 않았습니다.")
-
-    st.subheader("6. 학업 성취도별 분포 비율")
-    if achievement_ratio_info:
-        st.write(achievement_ratio_info)
-    else:
-        st.write("학업 성취도별 분포 비율이 입력되지 않았습니다.")
-
-    st.subheader("7. 대입 입결 정보")
-    if admission_results_info:
-        st.write(admission_results_info)
-    else:
-        st.write("대입 입결 정보가 입력되지 않았습니다.")
-
-    st.subheader("8. 과목별 준비 사항 및 특징")
-    if curriculum_info:
-        for subject, details in curriculum_info.items():
-            for sub_subject, preparation in details.items():
-                st.write(f"{subject} - {sub_subject}: {preparation}")
-    else:
-        st.write("과목별 준비 사항 및 특징이 입력되지 않았습니다.")
-
-    # 모든 입력 내용을 저장하는 버튼
-    if st.button("전체 정보 저장"):
-        with open("saved_information.txt", "w") as file:
-            file.write("1. 학교 정보\n")
-            file.write(str(school_info) + "\n\n")
-            file.write("2. 학생 수 및 교원 수\n")
-            file.write(str(student_teacher_info) + "\n\n")
-            file.write("3. 교육과정 편제표\n")
-            file.write(str(curriculum_info) + "\n\n")
-            file.write("4. 동아리 정보\n")
-            file.write(str(club_info) + "\n\n")
-            file.write("5. 과목별 성적평가\n")
-            file.write(str(subject_evaluation_info) + "\n\n")
-            file.write("6. 학업 성취도별 분포 비율\n")
-            file.write(str(achievement_ratio_info) + "\n\n")
-            file.write("7. 대입 입결 정보\n")
-            file.write(str(admission_results_info) + "\n\n")
-            file.write("8. 과목별 준비 사항 및 특징\n")
-            for subject, details in curriculum_info.items():
-                for sub_subject, preparation in details.items():
-                    file.write(f"{subject} - {sub_subject}: {preparation}\n")
-        st.write("모든 정보가 saved_information.txt 파일에 저장되었습니다.")
-
-    # 저장된 정보 출력 버튼
-    if st.button("저장된 정보 출력"):
-        try:
-            with open("saved_information.txt", "r") as file:
-                saved_info = file.read()
-                st.write(saved_info)
-        except FileNotFoundError:
-            st.write("저장된 정보가 없습니다.")
-
-
-# 페이지 선택
-page_options = {
-    "학교 정보 입력": page_school_info,
-    "학생 수 및 교원 수 입력": page_student_teacher_info,
-    "교육과정 편제표 입력": page_curriculum,
-    "동아리 정보 입력": page_club_info,
-    "과목 평가 방법 입력": page_subject_evaluation,
-    "학업 성취도별 분포 비율 입력": page_achievement_ratio,
-    "대입 입결 정보 입력": page_admission_results_info,
-    "과목별 준비 사항 및 특징 입력": page_subject_preparation,
-    "입력된 정보 요약 및 저장": page_summary_and_save
-}
-
-selected_page = st.sidebar.selectbox("페이지 선택", list(page_options.keys()))
-
-# 선택된 페이지 실행
-page_options[selected_page]()
-
-
 
 
