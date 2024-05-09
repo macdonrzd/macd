@@ -9,6 +9,7 @@ subject_evaluation_info = {}
 achievement_ratio_info = {}
 transcript_university_info = []
 admission_results_info = []
+subject_preparation_info = {}
 
 
 # 페이지 1: 학교 정보 입력
@@ -173,7 +174,6 @@ def page_subject_evaluation():
             st.write("과목 평가 방법이 삭제되었습니다.")
 
 
-
 # 페이지 6: 학업 성취도별 분포 비율 입력
 def page_achievement_ratio():
     st.title("학업 성취도별 분포 비율 입력")
@@ -312,11 +312,11 @@ def page_summary():
     else:
         st.write("동아리 정보가 입력되지 않았습니다.")
 
-    st.subheader("5. 과목별 성적평가")
+    st.subheader("5. 과목 평가 방법")
     if subject_evaluation_info:
         st.write(subject_evaluation_info)
     else:
-        st.write("과목별 성적평가가 입력되지 않았습니다.")
+        st.write("과목 평가 방법이 입력되지 않았습니다.")
 
     st.subheader("6. 학업 성취도별 분포 비율")
     if achievement_ratio_info:
@@ -332,14 +332,11 @@ def page_summary():
 
     st.subheader("8. 과목별 준비 사항 및 특징")
     if curriculum_info:
-        for subject, details in curriculum_info.items():
-            for sub_subject, preparation in details.items():
-                st.write(f"{subject} - {sub_subject}: {preparation}")
+        st.write(curriculum_info)
     else:
         st.write("과목별 준비 사항 및 특징이 입력되지 않았습니다.")
 
 
-# Sidebar에 페이지 선택 옵션 표시
 def main():
     st.sidebar.title("메뉴")
     pages = {
@@ -347,17 +344,18 @@ def main():
         "학생 수 및 교원 수 입력": page_student_teacher_info,
         "교육과정 편제표 입력": page_curriculum,
         "동아리 정보 입력": page_club_info,
-        "과목별 성적평가 입력": page_subject_evaluation,
+        "과목 평가 방법 입력": page_subject_evaluation,
         "학업 성취도별 분포 비율 입력": page_achievement_ratio,
         "대입 입결 정보 입력": page_admission_results_info,
         "과목별 준비 사항 및 특징 입력": page_subject_preparation,
         "입력된 정보 요약": page_summary
     }
+    selected_page = st.sidebar.radio("선택", list(pages.keys()))
 
-    # Sidebar에서 선택한 페이지를 렌더링
-    selection = st.sidebar.radio("이동할 페이지 선택", list(pages.keys()))
-    pages[selection]()
+    # 페이지 기능 실행
+    pages[selected_page]()
 
 
 if __name__ == "__main__":
     main()
+
