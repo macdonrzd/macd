@@ -1,23 +1,43 @@
 import streamlit as st
 
-# 입력된 정보를 저장할 변수들
+# 각 페이지에서 입력된 정보를 저장할 딕셔너리들을 선언합니다.
 school_info = {}
 student_teacher_info = {}
+curriculum_info = {}
+club_info = {}
+subject_evaluation_info = {}
+achievement_ratio_info = {}
+transcript_university_info = []
+admission_results_info = []
 
 
 # 페이지 1: 학교 정보 입력
 def page_school_info():
     st.title("학교 정보 입력")
+    administration_district = st.text_input("행정구:")
     school_name = st.text_input("학교 이름:")
-    address = st.text_input("주소:")
-    founding_date = st.date_input("설립일:")
-    accreditation = st.text_input("인증 여부:")
+    graduated_students = st.number_input("졸업생 수:", step=1, format="%d", value=0)
+    four_year_college = st.number_input("4년제 진학(명):", step=1, format="%d", value=0)
+    vocational_college = st.number_input("전문대 진학(명):", step=1, format="%d", value=0)
+
+    # 재수 인원 및 예비 재수 비율 계산
+    retest_students_estimate = max(graduated_students - (four_year_college + vocational_college), 0)
+    prep_resit_ratio_value = retest_students_estimate / graduated_students if graduated_students != 0 else 0
+
+    # 계산 결과 출력
+    st.write(f"예상 재수 인원: {retest_students_estimate} 명")
+    st.write(f"예비 재수 비율: {prep_resit_ratio_value:.2%}")
 
     # 데이터 저장
-    school_info["학교 이름"] = school_name
-    school_info["주소"] = address
-    school_info["설립일"] = founding_date
-    school_info["인증 여부"] = accreditation
+    school_info.update({
+        "행정구": administration_district,
+        "학교 이름": school_name,
+        "졸업생 수": graduated_students,
+        "4년제 진학(명)": four_year_college,
+        "전문대 진학(명)": vocational_college,
+        "예상 재수 인원": retest_students_estimate,
+        "예비 재수 비율": prep_resit_ratio_value
+    })
 
     # 저장 및 삭제 버튼
     if st.button("저장"):
@@ -30,39 +50,28 @@ def page_school_info():
 # 페이지 2: 학생 수 및 교원 수 입력
 def page_student_teacher_info():
     st.title("학생 수 및 교원 수 입력")
-    total_students = st.number_input("총 학생 수:", min_value=0, step=1)
-    total_teachers = st.number_input("총 교원 수:", min_value=0, step=1)
+    grade1_students = st.number_input("1학년 학생 수:", step=1, format="%d", value=0)
+    grade2_students = st.number_input("2학년 학생 수:", step=1, format="%d", value=0)
+    grade3_students = st.number_input("3학년 학생 수:", step=1, format="%d", value=0)
 
     # 총 학생 수 계산
-    total_students_text = f"총 학생 수: {total_students} 명"
-    st.write(total_students_text)
-
-    # 교사 1인당 담당 학생 수 비율 계산
-    if total_teachers > 0:
-        student_per_teacher = total_students / total_teachers
-        student_per_teacher_text = f"교사 1인당 담당 학생 수: {student_per_teacher:.2f} 명"
-        st.write(student_per_teacher_text)
+    total_students = grade1_students + grade2_students + grade3_students
 
     # 데이터 저장
-    student_teacher_info["총 학생 수"] = total_students
-    student_teacher_info["총 교원 수"] = total_teachers
+    student_teacher_info.update({
+        "1학년 학생 수": grade1_students,
+        "2학년 학생 수": grade2_students,
+        "3학년 학생 수": grade3_students,
+        "총 교원 수": st.number_input("총 교원 수:", step=1, format="%d", value=0),
+        "전교생 수": total_students
+    })
 
     # 저장 및 삭제 버튼
     if st.button("저장"):
-        st.write("학생 수 및 교원 수 정보가 저장되었습니다.")
+        st.write("학생 수 및 교원 수가 저장되었습니다.")
     if st.button("저장 삭제"):
         student_teacher_info.clear()
-        st.write("학생 수 및 교원 수 정보가 삭제되었습니다.")
-
-
-def main():
-    st.sidebar.title("메뉴")
-    menu_selection = st.sidebar.radio("이동할 페이지 선택", ["학교 정보 입력", "학생 수 및 교원 수 입력"])
-
-    if menu_selection == "학교 정보 입력":
-        page_school_info()
-    elif menu_selection == "학생 수 및 교원 수 입력":
-        page_student_teacher_info()
+        st.write("학생 수 및 교원 수가 삭제되었습니다.")
 
 
 # 페이지 3: 교육과정 편제표 입력
@@ -162,6 +171,7 @@ def page_subject_evaluation():
         if selected_grade_semester in subject_evaluation_info:
             del subject_evaluation_info[selected_grade_semester]
             st.write("과목 평가 방법이 삭제되었습니다.")
+
 
 
 # 페이지 6: 학업 성취도별 분포 비율 입력
@@ -292,29 +302,25 @@ def page_summary():
 
     st.subheader("3. 교육과정 편제표")
     if curriculum_info:
-        for grade_semester, subjects in curriculum_info.items():
-            st.write(f"{grade_semester}:\n{subjects}")
+        st.write(curriculum_info)
     else:
         st.write("교육과정 편제표가 입력되지 않았습니다.")
 
     st.subheader("4. 동아리 정보")
     if club_info:
-        for club_name, details in club_info.items():
-            st.write(f"{club_name}:\n{details}")
+        st.write(club_info)
     else:
         st.write("동아리 정보가 입력되지 않았습니다.")
 
-    st.subheader("5. 과목 평가 방법")
+    st.subheader("5. 과목별 성적평가")
     if subject_evaluation_info:
-        for grade_semester, evaluations in subject_evaluation_info.items():
-            st.write(f"{grade_semester}:\n{evaluations}")
+        st.write(subject_evaluation_info)
     else:
-        st.write("과목 평가 방법이 입력되지 않았습니다.")
+        st.write("과목별 성적평가가 입력되지 않았습니다.")
 
     st.subheader("6. 학업 성취도별 분포 비율")
     if achievement_ratio_info:
-        for grade_semester, ratios in achievement_ratio_info.items():
-            st.write(f"{grade_semester}:\n{ratios}")
+        st.write(achievement_ratio_info)
     else:
         st.write("학업 성취도별 분포 비율이 입력되지 않았습니다.")
 
@@ -327,37 +333,30 @@ def page_summary():
     st.subheader("8. 과목별 준비 사항 및 특징")
     if curriculum_info:
         for subject, details in curriculum_info.items():
-            st.write(f"{subject}:\n{details}")
+            for sub_subject, preparation in details.items():
+                st.write(f"{subject} - {sub_subject}: {preparation}")
     else:
         st.write("과목별 준비 사항 및 특징이 입력되지 않았습니다.")
 
 
+# Sidebar에 페이지 선택 옵션 표시
 def main():
     st.sidebar.title("메뉴")
-    menu_selection = st.sidebar.radio("이동할 페이지 선택", ["학교 정보 입력", "학생 수 및 교원 수 입력",
-                                                         "교육과정 편제표 입력", "동아리 정보 입력",
-                                                         "과목 평가 방법 입력", "학업 성취도별 분포 비율 입력",
-                                                         "대입 입결 정보 입력", "과목별 준비 사항 및 특징 입력",
-                                                         "입력된 정보 요약"])
+    pages = {
+        "학교 정보 입력": page_school_info,
+        "학생 수 및 교원 수 입력": page_student_teacher_info,
+        "교육과정 편제표 입력": page_curriculum,
+        "동아리 정보 입력": page_club_info,
+        "과목별 성적평가 입력": page_subject_evaluation,
+        "학업 성취도별 분포 비율 입력": page_achievement_ratio,
+        "대입 입결 정보 입력": page_admission_results_info,
+        "과목별 준비 사항 및 특징 입력": page_subject_preparation,
+        "입력된 정보 요약": page_summary
+    }
 
-    if menu_selection == "학교 정보 입력":
-        page_school_info()
-    elif menu_selection == "학생 수 및 교원 수 입력":
-        page_student_teacher_info()
-    elif menu_selection == "교육과정 편제표 입력":
-        page_curriculum()
-    elif menu_selection == "동아리 정보 입력":
-        page_club_info()
-    elif menu_selection == "과목 평가 방법 입력":
-        page_subject_evaluation()
-    elif menu_selection == "학업 성취도별 분포 비율 입력":
-        page_achievement_ratio()
-    elif menu_selection == "대입 입결 정보 입력":
-        page_admission_results_info()
-    elif menu_selection == "과목별 준비 사항 및 특징 입력":
-        page_subject_preparation()
-    elif menu_selection == "입력된 정보 요약":
-        page_summary()
+    # Sidebar에서 선택한 페이지를 렌더링
+    selection = st.sidebar.radio("이동할 페이지 선택", list(pages.keys()))
+    pages[selection]()
 
 
 if __name__ == "__main__":
