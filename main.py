@@ -140,7 +140,6 @@ def page_club_info():
             del club_info[club_name]
             st.write("동아리 정보가 삭제되었습니다.")
 
-
 # 페이지 5: 과목 평가 방법 입력
 def page_subject_evaluation():
     st.title("과목 평가 방법 입력")
