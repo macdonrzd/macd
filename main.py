@@ -54,15 +54,22 @@ def page_student_teacher_info():
     grade2_students = st.number_input("2학년 학생 수:", step=1, format="%d", value=0)
     grade3_students = st.number_input("3학년 학생 수:", step=1, format="%d", value=0)
 
-    # 총 학생 수 계산
+    # 총 학생 수 및 전교생 수 계산
     total_students = grade1_students + grade2_students + grade3_students
+    total_teachers = st.number_input("총 교원 수:", step=1, format="%d", value=0)
+
+    # 전교생 수 및 교사 1인당 학생 수 계산
+    total_students_text = f"전교생 수: {total_students} 명"
+    if total_teachers > 0:
+        students_per_teacher = total_students / total_teachers
+        total_students_text += f", 교사 1인당 학생 수: {students_per_teacher:.2f} 명"
 
     # 데이터 저장
     student_teacher_info.update({
         "1학년 학생 수": grade1_students,
         "2학년 학생 수": grade2_students,
         "3학년 학생 수": grade3_students,
-        "총 교원 수": st.number_input("총 교원 수:", step=1, format="%d", value=0),
+        "총 교원 수": total_teachers,
         "전교생 수": total_students
     })
 
