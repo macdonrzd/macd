@@ -116,10 +116,15 @@ def page_curriculum():
 def page_club_info():
     st.title("동아리 정보 입력")
     club_name = st.text_input("동아리 이름:")
-    club_activity_hour = st.number_input("동아리 활동 시간:", min_value=0, step=1)
+    club_type = st.radio("동아리 유형", ["정규", "자율"])
+    club_activity = st.text_area("동아리 활동 내용:", height=100)
 
     # 데이터 저장
-    club_info.update({club_name: club_activity_hour})
+    club_info[club_name] = {
+        "동아리 이름": club_name,
+        "동아리 유형": club_type,
+        "동아리 활동 내용": club_activity
+    }
 
     if st.button("저장"):
         st.write("동아리 정보가 저장되었습니다.")
@@ -129,21 +134,44 @@ def page_club_info():
             st.write("동아리 정보가 삭제되었습니다.")
 
 
-# 페이지 5: 과목별 성적평가 입력
+# 페이지 5: 과목 평가 방법 입력
 def page_subject_evaluation():
-    st.title("과목별 성적평가 입력")
-    subject_name = st.selectbox("과목 선택:", ["국어", "수학", "영어", "사회탐구", "과학탐구"])
-    evaluation_type = st.radio("성적평가 유형 선택:", ["등급제", "점수제"])
+    st.title("과목 평가 방법 입력")
+    selected_grade_semester = st.selectbox("학년 및 학기 선택", ["1학년 1학기", "1학년 2학기",
+                                                           "2학년 1학기", "2학년 2학기",
+                                                           "3학년 1학기", "3학년 2학기"])
+
+    selected_subject = st.selectbox("과목 선택", ["국어", "수학", "영어", "사회탐구", "과학탐구"])
+
+    evaluation_type = st.radio("평가 유형", ["지필평가", "수행평가"])
+    if evaluation_type == "지필평가":
+        evaluation_method = st.text_input("지필 유형 입력:")
+    else:
+        evaluation_method = st.text_input("수행 유형 입력:")  # 직접 입력란으로 변경
+
+    weight = st.number_input("반영 비율:", min_value=0.0, step=0.1)  # 수정된 부분
+    evaluation_count = st.number_input("평가 횟수:", min_value=0, step=1, value=0)
+    basic_score = st.number_input("기본 점수:", min_value=0, step=1, value=0)
+    evaluation_timing = st.text_input("평가 시기:")
 
     # 데이터 저장
-    subject_evaluation_info.update({subject_name: evaluation_type})
+    subject_evaluation_info.setdefault(selected_grade_semester, []).append({
+        "과목": selected_subject,
+        "평가 유형": evaluation_type,
+        "평가 방법": evaluation_method,
+        "반영 비율": weight,
+        "평가 횟수": evaluation_count,
+        "기본 점수": basic_score,
+        "평가 시기": evaluation_timing
+    })
 
     if st.button("저장"):
-        st.write("과목별 성적평가 정보가 저장되었습니다.")
+        st.write("과목 평가 방법이 저장되었습니다.")
     if st.button("저장 삭제"):
-        if subject_name in subject_evaluation_info:
-            del subject_evaluation_info[subject_name]
-            st.write("과목별 성적평가 정보가 삭제되었습니다.")
+        if selected_grade_semester in subject_evaluation_info:
+            del subject_evaluation_info[selected_grade_semester]
+            st.write("과목 평가 방법이 삭제되었습니다.")
+
 
 
 # 페이지 6: 학업 성취도별 분포 비율 입력
