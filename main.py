@@ -73,6 +73,9 @@ def page_student_teacher_info():
         "전교생 수": total_students
     })
 
+    # 결과 출력
+    st.write(total_students_text)
+
     # 저장 및 삭제 버튼
     if st.button("저장"):
         st.write("학생 수 및 교원 수가 저장되었습니다.")
@@ -367,3 +370,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
