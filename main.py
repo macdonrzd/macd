@@ -48,69 +48,67 @@ def page_school_info():
         st.write("학교 정보가 삭제되었습니다.")
 
 
-# 페이지 2: 학생 수 및 교원 수 입력
-def page_student_teacher_info():
-    st.title("학생 수 및 교원 수 입력")
-    grade1_students = st.number_input("1학년 학생 수:", step=1, format="%d", value=0)
-    grade2_students = st.number_input("2학년 학생 수:", step=1, format="%d", value=0)
-    grade3_students = st.number_input("3학년 학생 수:", step=1, format="%d", value=0)
+import streamlit as st
 
-    # 총 학생 수 계산
-    total_students = grade1_students + grade2_students + grade3_students
+# 입력된 정보를 저장할 변수들
+school_info = {}
+student_teacher_info = {}
+curriculum_info = {}
+club_info = {}
+subject_evaluation_info = {}
+achievement_ratio_info = {}
+admission_results_info = []
+
+
+# 페이지 1: 학교 정보 입력
+def page_school_info():
+    st.title("학교 정보 입력")
+    school_name = st.text_input("학교 이름:")
+    address = st.text_input("주소:")
+    founding_date = st.date_input("설립일:")
+    accreditation = st.text_input("인증 여부:")
 
     # 데이터 저장
-    student_teacher_info.update({
-        "1학년 학생 수": grade1_students,
-        "2학년 학생 수": grade2_students,
-        "3학년 학생 수": grade3_students,
-        "총 교원 수": st.number_input("총 교원 수:", step=1, format="%d", value=0),
-        "전교생 수": total_students
-    })
+    school_info["학교 이름"] = school_name
+    school_info["주소"] = address
+    school_info["설립일"] = founding_date
+    school_info["인증 여부"] = accreditation
 
     # 저장 및 삭제 버튼
     if st.button("저장"):
-        st.write("학생 수 및 교원 수가 저장되었습니다.")
+        st.write("학교 정보가 저장되었습니다.")
     if st.button("저장 삭제"):
-        student_teacher_info.clear()
-        st.write("학생 수 및 교원 수가 삭제되었습니다.")
+        school_info.clear()
+        st.write("학교 정보가 삭제되었습니다.")
 
 
-# 페이지 3: 교육과정 편제표 입력
-def page_curriculum():
-    st.title("교육과정 편제표 입력")
-    selected_grade_semester = st.selectbox("학년 및 학기 선택", ["1학년 1학기", "1학년 2학기",
-                                                           "2학년 1학기", "2학년 2학기",
-                                                           "3학년 1학기", "3학년 2학기"])
+# 페이지 2: 학생 수 및 교원 수 입력
+def page_student_teacher_info():
+    st.title("학생 수 및 교원 수 입력")
+    total_students = st.number_input("총 학생 수:", min_value=0, step=1)
+    total_teachers = st.number_input("총 교원 수:", min_value=0, step=1)
 
-    # 과목 및 세부 과목 선택
-    subjects = {
-        "국어": ["공통국어", "문학", "독서", "화법과 작문", "언어와 매체"],
-        "수학": ["공통수학", "수학1", "수학2", "심화수학", "경제수학", "기하", "미적분", "확률과 통계"],
-        "영어": ["공통영어", "영어1", "영어2", "영어독해", "영어작문", "영어회화", "영어듣기"],
-        "사회탐구": ["통합사회", "한국사", "사회문화", "정치와 법", "경제", "세계지리", "한국지리",
-                  "생활과 윤리", "윤리와 사상", "세계사", "동아시아사"],
-        "과학탐구": ["물리1", "물리2", "생명과학1", "생명과학2", "지구과학1", "지구과학2", "화학1", "화학2", "통합과학"]
-    }
+    # 총 학생 수 계산
+    total_students_text = f"총 학생 수: {total_students} 명"
+    st.write(total_students_text)
 
-    selected_subject = st.selectbox("과목 선택", list(subjects.keys()))
-    selected_sub_subject = st.selectbox(f"{selected_subject} 선택", subjects[selected_subject])
-
-    # 시수 입력란 추가
-    lesson_hours = st.number_input("시수 입력:", min_value=0, step=1)
+    # 교사 1인당 담당 학생 수 비율 계산
+    if total_teachers > 0:
+        student_per_teacher = total_students / total_teachers
+        student_per_teacher_text = f"교사 1인당 담당 학생 수: {student_per_teacher:.2f} 명"
+        st.write(student_per_teacher_text)
 
     # 데이터 저장
-    curriculum_info.setdefault(selected_grade_semester, []).append({
-        "과목": selected_subject,
-        "세부 과목": selected_sub_subject,
-        "시수": lesson_hours
-    })
+    student_teacher_info["총 학생 수"] = total_students
+    student_teacher_info["총 교원 수"] = total_teachers
 
+    # 저장 및 삭제 버튼
     if st.button("저장"):
-        st.write("교육과정 편제표가 저장되었습니다.")
+        st.write("학생 수 및 교원 수 정보가 저장되었습니다.")
     if st.button("저장 삭제"):
-        if selected_grade_semester in curriculum_info:
-            del curriculum_info[selected_grade_semester]
-            st.write("교육과정 편제표가 삭제되었습니다.")
+        student_teacher_info.clear()
+        st.write("학생 수 및 교원 수 정보가 삭제되었습니다.")
+
 
 
 # 페이지 4: 동아리 정보 입력
