@@ -50,9 +50,9 @@ def page_school_info():
 # 페이지 2: 학생 수 및 교원 수 입력
 def page_student_teacher_info():
     st.title("학생 수 및 교원 수 입력")
-    grade1_students = st.number_input("1학년 학생 수:", step=1, format="%d", value=0)
-    grade2_students = st.number_input("2학년 학생 수:", step=1, format="%d", value=0)
-    grade3_students = st.number_input("3학년 학생 수:", step=1, format="%d", value=0)
+    grade1_students = st.number_input("1학년 학생 수:", step=1, format="%d", value=0, key="grade1_students")
+    grade2_students = st.number_input("2학년 학생 수:", step=1, format="%d", value=0, key="grade2_students")
+    grade3_students = st.number_input("3학년 학생 수:", step=1, format="%d", value=0, key="grade3_students")
 
     # 총 학생 수 및 전교생 수 계산
     total_students = grade1_students + grade2_students + grade3_students
@@ -143,9 +143,10 @@ def page_club_info():
             del club_info[club_name]
             st.write("동아리 정보가 삭제되었습니다.")
 
-# 페이지 5: 과목 평가 방법 입력
-def page_subject_evaluation():
-    st.title("과목 평가 방법 입력")
+
+# 페이지 5: 과목 평가 정보 입력
+def page_subject_evaluation_info():
+    st.title("과목 평가 정보 입력")
     selected_grade_semester = st.selectbox("학년 및 학기 선택", ["1학년 1학기", "1학년 2학기",
                                                            "2학년 1학기", "2학년 2학기",
                                                            "3학년 1학기", "3학년 2학기"])
@@ -175,12 +176,11 @@ def page_subject_evaluation():
     })
 
     if st.button("저장"):
-        st.write("과목 평가 방법이 저장되었습니다.")
+        st.write("과목 평가 정보가 저장되었습니다.")
     if st.button("저장 삭제"):
         if selected_grade_semester in subject_evaluation_info:
             del subject_evaluation_info[selected_grade_semester]
-            st.write("과목 평가 방법이 삭제되었습니다.")
-
+            st.write("과목 평가 정보가 삭제되었습니다.")
 
 
 # 페이지 6: 학업 성취도별 분포 비율 입력
@@ -199,113 +199,128 @@ def page_achievement_ratio():
         "과학탐구": ["물리1", "물리2", "생명과학1", "생명과학2", "지구과학1", "지구과학2", "화학1", "화학2", "통합과학"]
     }
 
-    # 평균값 및 표준편차 입력
     selected_subject = st.selectbox("과목 선택", list(subjects.keys()))
-    selected_sub_subject = st.selectbox(f"{selected_subject} 선택", subjects[selected_subject])
-    mean = st.number_input(f"{selected_sub_subject} 평균값 입력", min_value=0.0, step=0.1)
-    std_deviation = st.number_input(f"{selected_sub_subject} 표준편차 입력", min_value=0.0, step=0.1)
 
-    st.subheader("성취도 비율 입력")
-    with st.form(key=f"{selected_subject}_{selected_sub_subject}"):
-        col1, col2, col3, col4, col5 = st.columns(5)
-        ratio_A = col1.number_input("A 비율", min_value=0.0, step=0.1)
-        ratio_B = col2.number_input("B 비율", min_value=0.0, step=0.1)
-        ratio_C = col3.number_input("C 비율", min_value=0.0, step=0.1)
-        ratio_D = col4.number_input("D 비율", min_value=0.0, step=0.1)
-        ratio_E = col5.number_input("E 비율", min_value=0.0, step=0.1)
-        submit_button = st.form_submit_button(label='저장')
+    achievement_level = st.radio("성취도", ["상", "중", "하"])
 
     # 데이터 저장
-    if submit_button:
-        achievement_ratio_info.setdefault(selected_grade_semester, []).append({
-            "과목": selected_subject,
-            "세부 과목": selected_sub_subject,
-            "성취도 비율": {
-                "평균값": mean,
-                "표준편차": std_deviation,
-                "A 비율": ratio_A,
-                "B 비율": ratio_B,
-                "C 비율": ratio_C,
-                "D 비율": ratio_D,
-                "E 비율": ratio_E
-            }
-        })
+    achievement_ratio_info.setdefault(selected_grade_semester, {}).setdefault(selected_subject, {})[achievement_level] = \
+        st.number_input(f"{achievement_level} 비율:", min_value=0.0, max_value=100.0, step=0.1)
 
+    if st.button("저장"):
         st.write("학업 성취도별 분포 비율이 저장되었습니다.")
     if st.button("저장 삭제"):
-        if selected_grade_semester in achievement_ratio_info:
-            del achievement_ratio_info[selected_grade_semester]
+        if selected_grade_semester in achievement_ratio_info \
+                and selected_subject in achievement_ratio_info[selected_grade_semester]:
+            del achievement_ratio_info[selected_grade_semester][selected_subject]
             st.write("학업 성취도별 분포 비율이 삭제되었습니다.")
 
 
-# 페이지 7: 대입 입결 정보 입력
-def page_admission_results_info():
-    st.title("대입 입결 정보 입력")
-    university_name = st.text_input("대학 이름:")
-    department_name = st.text_input("학과 이름:")
-    academic_score = st.number_input("내신 성적(전교과):", min_value=0.0, step=0.1)
-    admission_type = st.text_input("전형 이름:")
-    admission_result = st.selectbox("합격 여부", ["합격", "불합격", "추가 합격"])
-
-    # 데이터 저장
-    admission_results_info.append({
-        "대학 이름": university_name,
-        "학과 이름": department_name,
-        "내신 성적(전교과)": academic_score,
-        "전형 이름": admission_type,
-        "합격 여부": admission_result
-    })
+# 페이지 7: 입시 결과 입력
+def page_admission_results():
+    st.title("입시 결과 입력")
+    admission_results = st.text_area("입시 결과:", height=300)
+    admission_results_info.append(admission_results)
 
     if st.button("저장"):
-        st.write("대입 입결 정보가 저장되었습니다.")
+        st.write("입시 결과가 저장되었습니다.")
     if st.button("저장 삭제"):
         admission_results_info.clear()
-        st.write("대입 입결 정보가 삭제되었습니다.")
+        st.write("입시 결과가 삭제되었습니다.")
 
 
-# 페이지 8: 과목별 준비 사항 및 특징 입력
+# 페이지 8: 과목별 대비 준비율 입력
 def page_subject_preparation():
-    st.title("과목별 준비 사항 및 특징 입력")
-    subjects = {
-        "국어": ["공통국어", "문학", "독서", "화법과 작문", "언어와 매체"],
-        "수학": ["공통수학", "수학1", "수학2", "심화수학", "경제수학", "기하", "미적분", "확률과 통계"],
-        "영어": ["공통영어", "영어1", "영어2", "영어독해", "영어작문", "영어회화", "영어듣기"],
-        "사회탐구": ["통합사회", "한국사", "사회문화", "정치와 법", "경제", "세계지리", "한국지리",
-                  "생활과 윤리", "윤리와 사상", "세계사", "동아시아사"],
-        "과학탐구": ["물리1", "물리2", "생명과학1", "생명과학2", "지구과학1", "지구과학2", "화학1", "화학2", "통합과학"]
-    }
-
-    selected_subject = st.selectbox("과목 선택", list(subjects.keys()))
-    selected_sub_subject = st.selectbox(f"{selected_subject} 선택", subjects[selected_subject])
-
-    st.subheader("준비 사항 및 특징 입력")
-    preparation_and_features = st.text_area("준비 사항 및 특징:", height=200)
+    st.title("과목별 대비 준비율 입력")
+    subject = st.selectbox("과목 선택", ["국어", "수학", "영어", "사회탐구", "과학탐구"])
+    preparation_level = st.radio("대비 준비율", ["상", "중", "하"])
 
     # 데이터 저장
-    curriculum_info.setdefault(selected_subject, {})[selected_sub_subject] = preparation_and_features
+    subject_preparation_info.setdefault(subject, {})[preparation_level] = \
+        st.number_input(f"{preparation_level} 비율:", min_value=0.0, max_value=100.0, step=0.1)
 
-    # 저장 및 삭제 버튼
     if st.button("저장"):
-        st.write("과목별 준비 사항 및 특징이 저장되었습니다.")
+        st.write("과목별 대비 준비율이 저장되었습니다.")
     if st.button("저장 삭제"):
-        if selected_subject in curriculum_info and selected_sub_subject in curriculum_info[selected_subject]:
-            del curriculum_info[selected_subject][selected_sub_subject]
-            st.write("과목별 준비 사항 및 특징이 삭제되었습니다.")
+        if subject in subject_preparation_info:
+            del subject_preparation_info[subject]
+            st.write("과목별 대비 준비율이 삭제되었습니다.")
 
 
-# 페이지 선택
-page_options = {
-    "학교 정보 입력": page_school_info,
-    "학생 수 및 교원 수 입력": page_student_teacher_info,
-    "교육과정 편제표 입력": page_curriculum,
-    "동아리 정보 입력": page_club_info,
-    "과목 평가 방법 입력": page_subject_evaluation,
-    "학업 성취도별 분포 비율 입력": page_achievement_ratio,
-    "대입 입결 정보 입력": page_admission_results_info,
-    "과목별 준비 사항 및 특징 입력": page_subject_preparation
-}
+# 페이지 9: 입력된 정보 표로 정리 및 자동 저장
+def page_summary():
+    st.title("입력된 정보 요약")
 
-selected_page = st.sidebar.selectbox("페이지 선택", list(page_options.keys()))
+    # 학교 정보 요약
+    st.header("학교 정보")
+    st.table([school_info])
 
-# 선택된 페이지 실행
-page_options[selected_page]()
+    # 학생 수 및 교원 수 요약
+    st.header("학생 수 및 교원 수")
+    st.table([student_teacher_info])
+
+    # 교육과정 편제표 요약
+    st.header("교육과정 편제표")
+    for key, value in curriculum_info.items():
+        st.subheader(key)
+        st.table(value)
+
+    # 동아리 정보 요약
+    st.header("동아리 정보")
+    for club in club_info.values():
+        st.table([club])
+
+    # 과목 평가 정보 요약
+    st.header("과목 평가 정보")
+    for key, value in subject_evaluation_info.items():
+        st.subheader(key)
+        st.table(value)
+
+    # 학업 성취도별 분포 비율 요약
+    st.header("학업 성취도별 분포 비율")
+    for key, value in achievement_ratio_info.items():
+        st.subheader(key)
+        for sub_key, sub_value in value.items():
+            st.subheader(sub_key)
+            st.table([sub_value])
+
+    # 입시 결과 요약
+    st.header("입시 결과")
+    st.table([{"입시 결과": "\n".join(admission_results_info)}])
+
+    # 과목별 대비 준비율 요약
+    st.header("과목별 대비 준비율")
+    for key, value in subject_preparation_info.items():
+        st.subheader(key)
+        st.table([value])
+
+
+# Streamlit 애플리케이션 설정
+def main():
+    st.sidebar.title("메뉴")
+    page = st.sidebar.radio("이동", ["학교 정보 입력", "학생 수 및 교원 수 입력", "교육과정 편제표 입력",
+                                     "동아리 정보 입력", "과목 평가 정보 입력", "학업 성취도별 분포 비율 입력",
+                                     "입시 결과 입력", "과목별 대비 준비율 입력", "입력된 정보 요약"])
+
+    if page == "학교 정보 입력":
+        page_school_info()
+    elif page == "학생 수 및 교원 수 입력":
+        page_student_teacher_info()
+    elif page == "교육과정 편제표 입력":
+        page_curriculum()
+    elif page == "동아리 정보 입력":
+        page_club_info()
+    elif page == "과목 평가 정보 입력":
+        page_subject_evaluation_info()
+    elif page == "학업 성취도별 분포 비율 입력":
+        page_achievement_ratio()
+    elif page == "입시 결과 입력":
+        page_admission_results()
+    elif page == "과목별 대비 준비율 입력":
+        page_subject_preparation()
+    elif page == "입력된 정보 요약":
+        page_summary()
+
+
+if __name__ == "__main__":
+    main()
