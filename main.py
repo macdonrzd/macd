@@ -182,7 +182,6 @@ def page_subject_evaluation():
             st.write("과목 평가 방법이 삭제되었습니다.")
 
 
-
 # 페이지 6: 학업 성취도별 분포 비율 입력
 def page_achievement_ratio():
     st.title("학업 성취도별 분포 비율 입력")
