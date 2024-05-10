@@ -312,11 +312,12 @@ def page_summary():
 
     # 동아리 정보 요약
     st.header("동아리 정보")
-    for club in club_info.values():
-        st.table([club])
+    for key, value in club_info.items():
+        st.subheader(key)
+        st.table([value])
 
-    # 과목 평가 정보 요약
-    st.header("과목 평가 정보")
+    # 과목 평가 방법 요약
+    st.header("과목 평가 방법")
     for key, value in subject_evaluation_info.items():
         st.subheader(key)
         st.table(value)
@@ -325,45 +326,96 @@ def page_summary():
     st.header("학업 성취도별 분포 비율")
     for key, value in achievement_ratio_info.items():
         st.subheader(key)
-        for sub_key, sub_value in value.items():
-            st.subheader(sub_key)
-            st.table([sub_value])
+        st.table(value)
 
-    # 입시 결과 요약
-    st.header("입시 결과")
-    st.table([{"입시 결과": "\n".join(admission_results_info)}])
+    # 대입 입결 정보 요약
+    st.header("대입 입결 정보")
+    st.table(admission_results_info)
 
-    # 과목별 대비 준비율 요약
-    st.header("과목별 대비 준비율")
-    for key, value in subject_preparation_info.items():
-        st.subheader(key)
-        st.table([value])
+    # 과목별 준비 사항 및 특징 요약
+    st.header("과목별 준비 사항 및 특징")
+    for subject, details in curriculum_info.items():
+        st.subheader(subject)
+        for sub_subject, preparation in details.items():
+            st.write(f"{sub_subject}: {preparation}")
+
+    # 저장된 정보 파일로 저장
+    if st.button("저장"):
+        with open("학교정보.txt", "w") as f:
+            f.write("=== 학교 정보 ===\n")
+            for key, value in school_info.items():
+                f.write(f"{key}: {value}\n")
+
+            f.write("\n=== 학생 수 및 교원 수 ===\n")
+            for key, value in student_teacher_info.items():
+                f.write(f"{key}: {value}\n")
+
+            f.write("\n=== 교육과정 편제표 ===\n")
+            for key, value in curriculum_info.items():
+                f.write(f"{key}\n")
+                for item in value:
+                    f.write(f"{item}\n")
+
+            f.write("\n=== 동아리 정보 ===\n")
+            for value in club_info.values():
+                for key, item in value.items():
+                    f.write(f"{key}: {item}\n")
+
+            f.write("\n=== 과목 평가 방법 ===\n")
+            for key, value in subject_evaluation_info.items():
+                f.write(f"{key}\n")
+                for item in value:
+                    f.write(f"{item}\n")
+
+            f.write("\n=== 학업 성취도별 분포 비율 ===\n")
+            for key, value in achievement_ratio_info.items():
+                f.write(f"{key}\n")
+                for item in value:
+                    f.write(f"{item}\n")
+
+            f.write("\n=== 대입 입결 정보 ===\n")
+            for item in admission_results_info:
+                f.write(f"{item}\n")
+
+            f.write("\n=== 과목별 준비 사항 및 특징 ===\n")
+            for subject, details in curriculum_info.items():
+                f.write(f"{subject}\n")
+                for sub_subject, preparation in details.items():
+                    f.write(f"{sub_subject}: {preparation}\n")
+
+        st.write("정보가 성공적으로 저장되었습니다.")
+
+    # 저장된 파일 표시
+    with open("학교정보.txt", "r") as f:
+        st.subheader("저장된 정보 파일")
+        st.write(f.read())
 
 
-# Streamlit 애플리케이션 설정
 def main():
     st.sidebar.title("메뉴")
-    page = st.sidebar.radio("이동", ["학교 정보 입력", "학생 수 및 교원 수 입력", "교육과정 편제표 입력",
-                                     "동아리 정보 입력", "과목 평가 정보 입력", "학업 성취도별 분포 비율 입력",
-                                     "입시 결과 입력", "과목별 대비 준비율 입력", "입력된 정보 요약"])
+    app_mode = st.sidebar.selectbox("선택하세요", ["학교 정보 입력", "학생 수 및 교원 수 입력",
+                                              "교육과정 편제표 입력", "동아리 정보 입력",
+                                              "과목 평가 방법 입력", "학업 성취도별 분포 비율 입력",
+                                              "대입 입결 정보 입력", "과목별 준비 사항 및 특징 입력",
+                                              "입력된 정보 요약"])
 
-    if page == "학교 정보 입력":
+    if app_mode == "학교 정보 입력":
         page_school_info()
-    elif page == "학생 수 및 교원 수 입력":
+    elif app_mode == "학생 수 및 교원 수 입력":
         page_student_teacher_info()
-    elif page == "교육과정 편제표 입력":
+    elif app_mode == "교육과정 편제표 입력":
         page_curriculum()
-    elif page == "동아리 정보 입력":
+    elif app_mode == "동아리 정보 입력":
         page_club_info()
-    elif page == "과목 평가 정보 입력":
-        page_subject_evaluation_info()
-    elif page == "학업 성취도별 분포 비율 입력":
+    elif app_mode == "과목 평가 방법 입력":
+        page_subject_evaluation()
+    elif app_mode == "학업 성취도별 분포 비율 입력":
         page_achievement_ratio()
-    elif page == "입시 결과 입력":
+    elif app_mode == "대입 입결 정보 입력":
         page_admission_results()
-    elif page == "과목별 대비 준비율 입력":
+    elif app_mode == "과목별 준비 사항 및 특징 입력":
         page_subject_preparation()
-    elif page == "입력된 정보 요약":
+    elif app_mode == "입력된 정보 요약":
         page_summary()
 
 
