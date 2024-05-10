@@ -239,7 +239,7 @@ def page_achievement_ratio():
 
 
 # 페이지 7: 대입 입결 정보 입력
-def page_admission_results_info():
+def page_admission_results():
     st.title("대입 입결 정보 입력")
     university_name = st.text_input("대학 이름:")
     department_name = st.text_input("학과 이름:")
